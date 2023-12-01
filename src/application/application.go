@@ -12,8 +12,7 @@ func main() {
 	}
 
 	a.Initialize()
-	a.GetData()
 
-	a.Run()
+	a.RunServer()
 
 }
