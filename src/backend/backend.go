@@ -10,17 +10,19 @@ import (
 )
 
 type App struct {
-	Port 			string
-	DB 				*sql.DB
-	DBType		string
-	DBPath		string
+	Port   string
+	DB     *sql.DB
+	DBType string
+	DBPath string
 }
 
 func (a *App) Initialize() {
-	a.DB, err := sql.Open("sqlite3", "./practiceit.db")
+	DB, err := sql.Open(a.DBType, a.DBPath)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	a.DB = DB
 }
 
 func (a *App) Run() {
@@ -32,7 +34,6 @@ func (a *App) Run() {
 func helloWorld(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World\n")
 }
-
 
 func (a *App) GetData() {
 	rows, err := a.DB.Query("SELECT id, name, inventory, price FROM products")
@@ -54,14 +55,4 @@ type Product struct {
 	name      string
 	inventory int
 	price     int
-}
-
-func BEFunc() {
-	fmt.Println("Hello World!")
-}
-
-func Connect() {
-	dbc := DBConnection{dbType: "sqlite3", dbPath: "../../practiceit.db"}
-	dbc.Connect()
-	dbc.GetData()
 }

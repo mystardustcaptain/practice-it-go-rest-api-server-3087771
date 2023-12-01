@@ -5,7 +5,15 @@ import (
 )
 
 func main() {
-	backend.BEFunc()
-	backend.Connect()
+	a := backend.App{
+		Port:   ":9003",
+		DBType: "sqlite3",
+		DBPath: "./practiceit.db",
+	}
+
+	a.Initialize()
+	a.GetData()
+
+	a.Run()
 
 }
