@@ -26,7 +26,7 @@ const tableProductCreationQuery = `CREATE TABLE IF NOT EXISTS products
 `
 
 func TestMain(m *testing.M) {
-	a := backend.App{}
+	a = backend.App{Port: ":9003", DBType: "sqlite3", DBPath: "./test.db"}
 	a.Initialize()
 	ensureTableExists()
 	code := m.Run()
@@ -49,7 +49,7 @@ func clearProductTable() {
 func TestGetNonExistentProduct(t *testing.T) {
 	clearProductTable()
 
-	req, _ := http.NewRequest("GET", "/product/11", nil)
+	req, _ := http.NewRequest("GET", "/product/101", nil)
 	response := executeRequest(req)
 
 	checkResponseCode(t, http.StatusInternalServerError, response.Code)
@@ -57,7 +57,7 @@ func TestGetNonExistentProduct(t *testing.T) {
 	var m map[string]string
 	json.Unmarshal(response.Body.Bytes(), &m)
 	if m["error"] != "sql: no rows in result set" {
-		t.Errorf("Expected the 'error'key of the response to be set to 'sql:no rows in result set'. Got '%s'", m["error"])
+		t.Errorf("Expected the 'error' key of the response to be set to 'sql:no rows in result set'. Got '%s'", m["error"])
 	}
 }
 

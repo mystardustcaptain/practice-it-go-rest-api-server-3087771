@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	a := backend.App{Port: ":9003"}
+	a := backend.App{Port: ":9003", DBType: "sqlite3", DBPath: "./practiceit.db"}
 
 	a.Initialize()
 
