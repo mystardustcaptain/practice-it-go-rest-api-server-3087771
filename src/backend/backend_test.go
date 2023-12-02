@@ -22,11 +22,10 @@ const tableProductCreationQuery = `CREATE TABLE IF NOT EXISTS products
 	inventory INT NOT NULL,
 	price INT NOT NULL,
 	status VARCHAR(64) NOT NULL
-)
-`
+)`
 
 func TestMain(m *testing.M) {
-	a = backend.App{Port: ":9003", DBType: "sqlite3", DBPath: "./test.db"}
+	a = backend.App{Port: ":9003", DBType: "sqlite3", DBPath: "./test.sqlite"}
 	a.Initialize()
 	ensureTableExists()
 	code := m.Run()
@@ -44,6 +43,20 @@ func ensureTableExists() {
 func clearProductTable() {
 	a.DB.Exec("DELETE FROM products")
 	a.DB.Exec("DELETE FROM sqlite_sequence WHERE name = 'products'")
+}
+
+func insertProductDummy(productCode string, name string, inventory int, price int, status string) {
+	a.DB.Exec("INSERT INTO products(productCode, name, inventory, price, status) VALUES(?, ?, ?, ?, ?)", productCode, name, inventory, price, status)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// id, err := res.LastInsertId()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// log.Println("Dummy created ID: ", int(id))
 }
 
 func TestGetNonExistentProduct(t *testing.T) {
@@ -69,6 +82,38 @@ func TestCreateProduct(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/products", bytes.NewBuffer(payload))
 	response := executeRequest(req)
 
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	var m map[string]interface{}
+	json.Unmarshal(response.Body.Bytes(), &m)
+
+	if m["productCode"] != "TEST12345" {
+		t.Errorf("Expected productCode to be 'TEST12345'. Got '%v'", m["productCode"])
+	}
+	if m["name"] != "ProductTest" {
+		t.Errorf("Expected name to be 'ProductTest'. Got '%v'", m["name"])
+	}
+	if m["inventory"] != 1.0 {
+		t.Errorf("Expected inventory to be '1'. Got '%v'", m["inventory"])
+	}
+	if m["price"] != 1.0 {
+		t.Errorf("Expected price to be '1'. Got '%v'", m["price"])
+	}
+	if m["status"] != "testing" {
+		t.Errorf("Expected status to be 'testing'. Got '%v'", m["status"])
+	}
+	if m["id"] != 1.0 {
+		t.Errorf("Expected id to be '1'. Got '%v'", m["id"])
+	}
+}
+
+func TestGetProduct(t *testing.T) {
+	clearProductTable()
+
+	insertProductDummy("TEST12345", "ProductTest", 1, 1, "testing")
+
+	req, _ := http.NewRequest("GET", "/product/1", nil)
+	response := executeRequest(req)
 	checkResponseCode(t, http.StatusOK, response.Code)
 
 	var m map[string]interface{}
