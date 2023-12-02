@@ -26,11 +26,7 @@ const tableProductCreationQuery = `CREATE TABLE IF NOT EXISTS products
 `
 
 func TestMain(m *testing.M) {
-	a := backend.App{
-		Port:   ":9003",
-		DBType: "sqlite3",
-		DBPath: "./practiceit.db",
-	}
+	a := backend.App{}
 	a.Initialize()
 	ensureTableExists()
 	code := m.Run()

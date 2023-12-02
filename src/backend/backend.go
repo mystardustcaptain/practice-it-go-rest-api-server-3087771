@@ -16,13 +16,11 @@ import (
 type App struct {
 	Port   string
 	DB     *sql.DB
-	DBType string
-	DBPath string
 	Router *mux.Router
 }
 
 func (a *App) Initialize() {
-	db, err := sql.Open(a.DBType, a.DBPath)
+	db, err := sql.Open("sqlite3", "../../practiceit.db")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
