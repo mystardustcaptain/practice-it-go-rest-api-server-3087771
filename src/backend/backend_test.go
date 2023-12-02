@@ -64,7 +64,7 @@ func TestGetNonExistentProduct(t *testing.T) {
 func TestCreateProduct(t *testing.T) {
 	clearProductTable()
 
-	payload := []byte(`{"producCode":"TEST12345", "name":"ProductTest", "inventory":1, "price":1, "status":"testing"}`)
+	payload := []byte(`{"productCode":"TEST12345", "name":"ProductTest", "inventory":1, "price":1, "status":"testing"}`)
 
 	req, _ := http.NewRequest("POST", "/products", bytes.NewBuffer(payload))
 	response := executeRequest(req)

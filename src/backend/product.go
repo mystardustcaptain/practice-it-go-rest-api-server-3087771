@@ -37,8 +37,8 @@ func GetProducts(db *sql.DB) ([]product, error) {
 }
 
 func (p *product) getProduct(db *sql.DB) error {
-	db.QueryRow("SELECT productCode, name, inventory, price, status FROM products where id = '?'", p.ID).Scan(&p.ProductCode, &p.Name, &p.Inventory, &p.Price, &p.Status)
-	return nil
+	err := db.QueryRow("SELECT productCode, name, inventory, price, status FROM products where id = '?'", p.ID).Scan(&p.ProductCode, &p.Name, &p.Inventory, &p.Price, &p.Status)
+	return err
 }
 
 func (p *product) createProduct(db *sql.DB) error {
